@@ -44,6 +44,7 @@ try {
     <form action="guestbook.php" method="post">
         Email: <input type="email" name="email"><br/>
         Bericht: <textarea name="text" minlength="4"></textarea><br/>
+
         <?php if (userIsAdmin($conn)) {
             echo  "<input type=\"hidden\" value=\"red\" name=\"color\">";
             echo "<input type\"hidden\" name=\"admin\" value=" . $_COOKIE['admin'] . "\">";
@@ -60,8 +61,14 @@ try {
         $text = $_POST['text'];
         $admin = isset($_POST['admin']) ? 1 : 0;
         $color = $_POST['color'];
-        $conn->query("INSERT INTO `entries`(`email`, `color`, `admin`, `text`) 
+
+        $isValidEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
+        if ($isValidEmail) {
+            $conn->query("INSERT INTO `entries`(`email`, `color`, `admin`, `text`) 
                                         VALUES ('$email', '$color', '$admin', '$text');");
+        } else {
+            echo "<p>[INVALID input]</p>";
+        }
     }
 
 
